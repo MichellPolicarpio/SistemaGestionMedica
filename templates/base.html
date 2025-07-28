@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Patient Management System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+            color: #2c3e50 !important;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border-radius: 0.5rem;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 0.5rem 0.5rem 0 0 !important;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        }
+        .table {
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .alert {
+            border-radius: 0.5rem;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 1rem;
+        }
+        
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+        
+        .patient-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e9ecef;
+        }
+        
+        .patient-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .stats-card {
+            transition: transform 0.2s;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+        }
+        
+        .btn-outline-success:hover {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-color: #28a745;
+        }
+        
+        .btn-outline-info:hover {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            border-color: #17a2b8;
+        }
+        
+        .btn-outline-warning:hover {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            border-color: #ffc107;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color 0.2s;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+        
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+        }
+        
+        [data-theme="dark"] .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+        }
+        
+        [data-theme="dark"] .navbar-nav .nav-link:hover {
+            color: rgba(255, 255, 255, 1) !important;
+        }
+        
+        .display-6 {
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        @media (max-width: 768px) {
+            .display-6 {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Dark Mode Styles */
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #333333;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-color: #444444;
+            --navbar-bg: #2d2d2d;
+            --card-bg: #333333;
+            --table-bg: #2d2d2d;
+            --table-border: #444444;
+        }
+        
+        [data-theme="dark"] body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .navbar {
+            background: var(--navbar-bg) !important;
+        }
+        
+        [data-theme="dark"] .navbar-brand {
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        [data-theme="dark"] .navbar-brand:hover {
+            color: #e3f2fd !important;
+        }
+        
+        .navbar-brand {
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .navbar-brand:hover {
+            color: #e3f2fd !important;
+        }
+        
+        [data-theme="dark"] .card {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .card-header {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .table {
+            background-color: var(--table-bg);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .table th,
+        [data-theme="dark"] .table td {
+            border-color: var(--table-border);
+        }
+        
+        [data-theme="dark"] .list-group-item {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .form-control:focus,
+        [data-theme="dark"] .form-select:focus {
+            background-color: var(--bg-secondary);
+            border-color: #667eea;
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .modal-content {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .modal-header {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .btn-outline-secondary {
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .btn-outline-secondary:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .text-muted {
+            color: var(--text-secondary) !important;
+        }
+        
+        [data-theme="dark"] p,
+        [data-theme="dark"] .card-body,
+        [data-theme="dark"] .list-group-item,
+        [data-theme="dark"] .table td,
+        [data-theme="dark"] .table th {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .card-text,
+        [data-theme="dark"] .card-title,
+        [data-theme="dark"] .card-subtitle {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .text-dark {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .text-body {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .text-secondary {
+            color: var(--text-secondary) !important;
+        }
+        
+        [data-theme="dark"] .patient-info,
+        [data-theme="dark"] .patient-details,
+        [data-theme="dark"] .info-item,
+        [data-theme="dark"] .detail-item {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .info-label,
+        [data-theme="dark"] .detail-label {
+            color: var(--text-secondary) !important;
+            font-weight: 600;
+        }
+        
+        [data-theme="dark"] .info-value,
+        [data-theme="dark"] .detail-value {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .card-body p,
+        [data-theme="dark"] .card-body div,
+        [data-theme="dark"] .card-body span,
+        [data-theme="dark"] .card-body strong,
+        [data-theme="dark"] .card-body b {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .list-group-item p,
+        [data-theme="dark"] .list-group-item div,
+        [data-theme="dark"] .list-group-item span,
+        [data-theme="dark"] .list-group-item strong,
+        [data-theme="dark"] .list-group-item b {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .table-responsive {
+            color: var(--text-primary) !important;
+        }
+        
+        [data-theme="dark"] .alert-info {
+            background-color: #1a3a4a;
+            border-color: #2a5a6a;
+            color: #b8d4e3;
+        }
+        
+        [data-theme="dark"] .alert-success {
+            background-color: #1a4a2a;
+            border-color: #2a5a3a;
+            color: #b8e3c8;
+        }
+        
+        [data-theme="dark"] .alert-warning {
+            background-color: #4a3a1a;
+            border-color: #5a4a2a;
+            color: #e3d4b8;
+        }
+        
+        [data-theme="dark"] .alert-danger {
+            background-color: #4a1a1a;
+            border-color: #5a2a2a;
+            color: #e3b8b8;
+        }
+        
+        /* Smooth transitions */
+        body, .card, .navbar, .form-control, .form-select, .table, .list-group-item {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+                <i class="fas fa-heartbeat me-2"></i>Sistema Médico
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('new_patient') }}">
+                            <i class="fas fa-user-plus me-1"></i>Nuevo Paciente
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('analytics') }}">
+                            <i class="fas fa-chart-pie me-1"></i>Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('all_payments') }}">
+                            <i class="fas fa-credit-card me-1"></i>Pagos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link" onclick="toggleDarkMode()" id="darkModeToggle" title="Cambiar modo oscuro/claro">
+                            <i class="fas fa-moon" id="darkModeIcon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <!-- Información de la Clínica -->
+                <div class="col-lg-4 mb-4">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-hospital me-2"></i>Clínica Médica Integral
+                    </h5>
+                    <p class="mb-2">
+                        <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                        Av. Independencia No. 123, Centro Histórico<br>
+                        Ciudad de Veracruz, Veracruz, México
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-phone me-2 text-primary"></i>
+                        Tel: (229) 123-4567
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-mobile-alt me-2 text-primary"></i>
+                        Cel: (229) 987-6543
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-envelope me-2 text-primary"></i>
+                        info@clinicamedica.com
+                    </p>
+                </div>
+                
+                <!-- Horarios de Atención -->
+                <div class="col-lg-4 mb-4">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-clock me-2"></i>Horarios de Atención
+                    </h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <p class="mb-1"><strong>Lunes - Viernes:</strong></p>
+                            <p class="mb-1">8:00 AM - 6:00 PM</p>
+                            <p class="mb-1"><strong>Sábados:</strong></p>
+                            <p class="mb-1">8:00 AM - 2:00 PM</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="mb-1"><strong>Domingos:</strong></p>
+                            <p class="mb-1">9:00 AM - 1:00 PM</p>
+                            <p class="mb-1"><strong>Urgencias:</strong></p>
+                            <p class="mb-1">24/7</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Servicios -->
+                <div class="col-lg-4 mb-4">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-stethoscope me-2"></i>Servicios Médicos
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Medicina General
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Consulta de Primera Vez
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Seguimiento Médico
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Prescripción de Medicamentos
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Atención de Urgencias
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Certificados Médicos
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+
+            
+            <!-- Copyright -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <hr class="bg-light">
+                    <div class="text-center">
+                        <p class="mb-2">
+                            <i class="fas fa-heart text-danger me-1"></i>
+                            Cuidando tu salud desde 2020
+                        </p>
+                        <p class="mb-0 text-muted">
+                            © 2025 Clínica Médica Integral. Todos los derechos reservados. 
+                            Sistema de Gestión de Pacientes v2.0
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dark Mode Script -->
+    <script>
+        // Check for saved theme preference or default to 'light'
+        const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
+        
+        // Apply the current theme
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            updateDarkModeUI(true);
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                updateDarkModeUI(false);
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                updateDarkModeUI(true);
+            }
+        }
+        
+        function updateDarkModeUI(isDark) {
+            const icon = document.getElementById('darkModeIcon');
+            
+            if (isDark) {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        }
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

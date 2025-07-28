@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-stethoscope"></i> Nuevo Diagnóstico y Pago</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Paciente:</strong> {{ patient.name }} | 
+                        <strong>Edad:</strong> {{ 2025 - ((patient.date_of_birth|string).split('-')[0]|int) }} años |
+                        <strong>Contacto:</strong> {{ patient.phone }}
+                    </div>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="doctor_name" class="form-label">
+                                        <i class="fas fa-user-md me-1"></i>Nombre del Doctor *
+                                    </label>
+                                    <input type="text" class="form-control" id="doctor_name" name="doctor_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="professional_license" class="form-label">
+                                        <i class="fas fa-id-card me-1"></i>Cédula Profesional *
+                                    </label>
+                                    <input type="text" class="form-control" id="professional_license" name="professional_license" 
+                                           placeholder="Ej: 12345678" required>
+                                    <small class="text-muted">Número de cédula profesional del médico</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">
+                                        <i class="fas fa-calendar me-1"></i>Fecha
+                                    </label>
+                                    <input type="date" class="form-control" id="date" name="date" value="{{ today }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="symptoms" class="form-label">Síntomas *</label>
+                            <textarea class="form-control" id="symptoms" name="symptoms" rows="4" required 
+                                      placeholder="Describe los síntomas del paciente en detalle..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label">Diagnóstico *</label>
+                            <textarea class="form-control" id="diagnosis" name="diagnosis" rows="3" required 
+                                      placeholder="Ingrese el diagnóstico médico..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="treatment_plan" class="form-label">Plan de Tratamiento</label>
+                            <textarea class="form-control" id="treatment_plan" name="treatment_plan" rows="4"
+                                      placeholder="Describe el plan de tratamiento recomendado..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"
+                                      placeholder="Cualquier nota adicional u observaciones..."></textarea>
+                        </div>
+
+                        <!-- Payment Information Section -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-credit-card me-2"></i>Información de Pago
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="consultation_amount" class="form-label">
+                                                <i class="fas fa-dollar-sign me-1"></i>Precio de Consulta ($)
+                                            </label>
+                                            <input type="number" class="form-control" id="consultation_amount" 
+                                                   name="consultation_amount" value="300.00" step="0.01" min="0" required>
+                                            <small class="text-muted">Monto que se cobrará por esta consulta</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="payment_method" class="form-label">
+                                                <i class="fas fa-credit-card me-1"></i>Método de Pago
+                                            </label>
+                                            <select class="form-select" id="payment_method" name="payment_method" required>
+                                                <option value="Cash">Efectivo</option>
+                                                <option value="Card">Tarjeta de Crédito/Débito</option>
+                                                <option value="Transfer">Transferencia Bancaria</option>
+                                                <option value="Check">Cheque</option>
+                                                <option value="Other">Otro</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Nota:</strong> Al crear el diagnóstico, se generará automáticamente un registro de pago por el monto especificado.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                                                    <a href="{{ url_for('view_patient', patient_id=patient.id) }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver al Paciente
+                        </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Crear Diagnóstico y Pago
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set today's date
+    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+    
+    // Validate consultation amount
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const amount = document.getElementById('consultation_amount').value;
+        if (amount <= 0) {
+            e.preventDefault();
+            alert('El precio de la consulta debe ser mayor a $0');
+            return false;
+        }
+    });
+</script>
+{% endblock %} 

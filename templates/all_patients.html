@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Todos los Pacientes - Sistema de Gestión Médica{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-users me-2"></i>Todos los Pacientes
+                </h4>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-primary fs-6">{{ patients|length }} Pacientes</span>
+                    <a href="{{ url_for('new_patient') }}" class="btn btn-success">
+                        <i class="fas fa-user-plus me-2"></i>Nuevo Paciente
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if patients %}
+                <div class="row">
+                    {% for patient in patients %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 patient-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-user me-2 text-primary"></i>{{ patient.name }}
+                                    </h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ url_for('view_patient', patient_id=patient.id) }}">
+                                                <i class="fas fa-eye me-2"></i>Ver Detalles
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('edit_patient', patient_id=patient.id) }}">
+                                                <i class="fas fa-edit me-2"></i>Editar
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('new_diagnosis', patient_id=patient.id) }}">
+                                                <i class="fas fa-stethoscope me-2"></i>Nuevo Diagnóstico
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('new_prescription', patient_id=patient.id) }}">
+                                                <i class="fas fa-prescription me-2"></i>Nueva Receta
+                                            </a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="deletePatient({{ patient.id }})">
+                                                <i class="fas fa-trash me-2"></i>Eliminar
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted">Edad</small>
+                                        <div class="fw-bold">{{ 2025 - ((patient.date_of_birth|string).split('-')[0]|int) }} años</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">IMC</small>
+                                        <div class="fw-bold">{{ "%.1f"|format(patient.weight / ((patient.height/100) ** 2)) }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">Contacto</small>
+                                    <div class="fw-bold text-truncate">{{ patient.email }}</div>
+                                    <div class="text-muted">{{ patient.phone }}</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">Dirección</small>
+                                    <div class="text-muted small">{{ patient.address[:50] }}{% if patient.address|length > 50 %}...{% endif %}</div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ url_for('view_patient', patient_id=patient.id) }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>Ver
+                                    </a>
+                                    <small class="text-muted">{{ patient.created_at.strftime('%d/%m/%Y') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay pacientes registrados</h5>
+                    <p class="text-muted">Comienza agregando tu primer paciente</p>
+                    <a href="{{ url_for('new_patient') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Agregar Paciente
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar este paciente?</p>
+                <p class="text-muted small">Esta acción no se puede deshacer y eliminará todos los datos asociados.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deletePatient(patientId) {
+    if (confirm('¿Estás seguro de que quieres eliminar este paciente? Esta acción no se puede deshacer.')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/patient/${patientId}/delete`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %} 

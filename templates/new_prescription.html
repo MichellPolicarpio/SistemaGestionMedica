@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-prescription"></i> New Prescription</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Patient:</strong> {{ patient.name }} | 
+                        <strong>Age:</strong> {{ 2025 - ((patient.date_of_birth|string).split('-')[0]|int) }} years |
+                        <strong>Contact:</strong> {{ patient.phone }}
+                    </div>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="doctor_name" class="form-label">Doctor Name *</label>
+                                    <input type="text" class="form-control" id="doctor_name" name="doctor_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="date" name="date" value="{{ today }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label">Diagnosis *</label>
+                            <textarea class="form-control" id="diagnosis" name="diagnosis" rows="3" required 
+                                      placeholder="Enter the medical diagnosis..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="medications" class="form-label">Medications *</label>
+                            <textarea class="form-control" id="medications" name="medications" rows="5" required
+                                      placeholder="Enter medications with dosages and frequency. Example:
+- Paracetamol 500mg, 1 tablet every 6 hours
+- Ibuprofen 400mg, 1 tablet every 8 hours
+- Amoxicillin 500mg, 1 capsule twice daily"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="instructions" class="form-label">Instructions</label>
+                            <textarea class="form-control" id="instructions" name="instructions" rows="3"
+                                      placeholder="Enter any special instructions for the patient..."></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('view_patient', patient_id=patient.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Patient
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Create Prescription
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set today's date
+    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %} 

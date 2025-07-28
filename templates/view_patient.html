@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block title %}{{ patient.name }} - Detalles del Paciente{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Detalles del Paciente</h2>
+                <div>
+                    <a href="{{ url_for('edit_patient', patient_id=patient.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Editar Paciente
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la Lista
+                    </a>
+                </div>
+            </div>
+
+            <!-- Patient Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-user"></i> Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Nombre:</strong> {{ patient.name }}</p>
+                            <p><strong>Contacto:</strong> {{ patient.phone }}</p>
+                            <p><strong>Fecha de Nacimiento:</strong> {{ patient.date_of_birth }}</p>
+                            <p><strong>Edad:</strong> {{ 2025 - ((patient.date_of_birth|string).split('-')[0]|int) }} años</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Dirección:</strong> {{ patient.address }}</p>
+                            <p><strong>Altura:</strong> {{ patient.height }} cm</p>
+                            <p><strong>Peso:</strong> {{ patient.weight }} kg</p>
+                            <p><strong>IMC:</strong> {{ "%.1f"|format(patient.weight / ((patient.height/100) * (patient.height/100))) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical History -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-heartbeat"></i> Historial Médico</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Enfermedades Previas:</strong> {{ patient.past_illnesses or 'Ninguna' }}</p>
+                            <p><strong>Medicamentos Actuales:</strong> {{ patient.current_medications or 'Ninguno' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Alergias:</strong> {{ patient.allergies or 'Ninguna' }}</p>
+                            <p><strong>Hábitos Alimenticios:</strong> {{ patient.food_habits or 'No especificado' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Records Section -->
+            <div class="row">
+                <!-- Prescriptions -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-prescription"></i> Recetas</h5>
+                            <a href="{{ url_for('new_prescription', patient_id=patient.id) }}" class="btn btn-success btn-sm">
+                                <i class="fas fa-plus"></i> Nueva Receta
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if patient.prescriptions %}
+                                <div class="list-group">
+                                    {% for prescription in patient.prescriptions[:3] %}
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">{{ prescription.date }}</h6>
+                                                <small class="text-muted">Dr. {{ prescription.doctor_name }}</small>
+                                            </div>
+                                            <a href="{{ url_for('prescription_pdf', prescription_id=prescription.id) }}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-download"></i> PDF
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% if patient.prescriptions|length > 3 %}
+                                    <div class="text-center mt-2">
+                                        <a href="{{ url_for('patient_prescriptions', patient_id=patient.id) }}" class="btn btn-outline-info btn-sm">
+                                            Ver Todas ({{ patient.prescriptions|length }})
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-muted">No hay recetas aún.</p>
+                                <a href="{{ url_for('new_prescription', patient_id=patient.id) }}" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Crear Primera Receta
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagnoses -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-stethoscope"></i> Diagnósticos</h5>
+                            <div>
+                                <a href="{{ url_for('patient_diagnoses', patient_id=patient.id) }}" class="btn btn-info btn-sm me-2">
+                                    <i class="fas fa-list"></i> Ver Todos
+                                </a>
+                                <a href="{{ url_for('new_diagnosis', patient_id=patient.id) }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-plus"></i> Nuevo Diagnóstico
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% if patient.diagnoses %}
+                                <div class="list-group">
+                                    {% for diagnosis in patient.diagnoses[:3] %}
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">{{ diagnosis.date }}</h6>
+                                                <small class="text-muted">Dr. {{ diagnosis.doctor_name }}</small>
+                                            </div>
+                                            <a href="{{ url_for('diagnosis_pdf', diagnosis_id=diagnosis.id) }}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-download"></i> PDF
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% if patient.diagnoses|length > 3 %}
+                                    <div class="text-center mt-2">
+                                        <a href="{{ url_for('patient_diagnoses', patient_id=patient.id) }}" class="btn btn-outline-info btn-sm">
+                                            Ver Todos ({{ patient.diagnoses|length }})
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-muted">No hay diagnósticos aún.</p>
+                                <a href="{{ url_for('new_diagnosis', patient_id=patient.id) }}" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Crear Primer Diagnóstico
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Section -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-credit-card"></i> Pagos</h5>
+                            <div>
+                                <a href="{{ url_for('patient_payments', patient_id=patient.id) }}" class="btn btn-info btn-sm me-2">
+                                    <i class="fas fa-list"></i> Ver Todos
+                                </a>
+                                <a href="{{ url_for('new_payment', patient_id=patient.id) }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-plus"></i> Nuevo Pago
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% if patient.payments %}
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h6 class="text-success">${{ "%.2f"|format(patient.payments|selectattr('status', 'equalto', 'Completed')|sum(attribute='amount')) }}</h6>
+                                            <small class="text-muted">Total Pagado</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h6 class="text-warning">${{ "%.2f"|format(patient.payments|selectattr('status', 'equalto', 'Pending')|sum(attribute='amount')) }}</h6>
+                                            <small class="text-muted">Pendiente</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h6>{{ patient.payments|length }}</h6>
+                                            <small class="text-muted">Total Registros</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h6>{{ patient.payments|selectattr('status', 'equalto', 'Completed')|list|length }}</h6>
+                                            <small class="text-muted">Completados</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group mt-3">
+                                    {% for payment in patient.payments[:3] %}
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">{{ payment.payment_date.strftime('%d/%m/%Y') }} - ${{ "%.2f"|format(payment.amount) }}</h6>
+                                                <small class="text-muted">{{ payment.service_type }} - {{ payment.payment_method }}</small>
+                                            </div>
+                                            <span class="badge {% if payment.status == 'Completed' %}bg-success{% elif payment.status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                                {{ payment.status }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% if patient.payments|length > 3 %}
+                                    <div class="text-center mt-2">
+                                        <a href="{{ url_for('patient_payments', patient_id=patient.id) }}" class="btn btn-outline-info btn-sm">
+                                            Ver Todos ({{ patient.payments|length }})
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-muted">No hay pagos registrados.</p>
+                                <a href="{{ url_for('new_payment', patient_id=patient.id) }}" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Registrar Primer Pago
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diseases and Medications -->
+            <div class="row">
+                <!-- Diseases -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-virus"></i> Diseases</h5>
+                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addDiseaseModal">
+                                <i class="fas fa-plus"></i> Add Disease
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            {% if patient.diseases %}
+                                <div class="list-group">
+                                    {% for disease in patient.diseases %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ disease.name }}</h6>
+                                            {% if disease.description %}
+                                                <small class="text-muted">{{ disease.description }}</small>
+                                            {% endif %}
+                                        </div>
+                                        <form method="POST" action="{{ url_for('delete_disease', patient_id=patient.id, disease_id=disease.id) }}" style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this disease?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No diseases recorded.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medications -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-pills"></i> Medications</h5>
+                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addMedicationModal">
+                                <i class="fas fa-plus"></i> Add Medication
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            {% if patient.medications %}
+                                <div class="list-group">
+                                    {% for medication in patient.medications %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ medication.name }}</h6>
+                                            <small class="text-muted">
+                                                {% if medication.dosage %}{{ medication.dosage }}{% endif %}
+                                                {% if medication.frequency %} - {{ medication.frequency }}{% endif %}
+                                            </small>
+                                        </div>
+                                        <form method="POST" action="{{ url_for('delete_medication', patient_id=patient.id, medication_id=medication.id) }}" style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this medication?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No medications recorded.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-file-medical"></i> Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('generate_report', patient_id=patient.id) }}" class="btn btn-primary">
+                                <i class="fas fa-file-pdf"></i> Generate Patient Report
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ url_for('email_report', patient_id=patient.id) }}" class="btn btn-info">
+                                <i class="fas fa-envelope"></i> Email Report
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Disease Modal -->
+<div class="modal fade" id="addDiseaseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Disease</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_disease', patient_id=patient.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="disease_name" class="form-label">Disease Name</label>
+                        <input type="text" class="form-control" id="disease_name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="disease_description" class="form-label">Description</label>
+                        <textarea class="form-control" id="disease_description" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Disease</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Medication Modal -->
+<div class="modal fade" id="addMedicationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Medication</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_medication', patient_id=patient.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="medication_name" class="form-label">Medication Name</label>
+                        <input type="text" class="form-control" id="medication_name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="medication_dosage" class="form-label">Dosage</label>
+                        <input type="text" class="form-control" id="medication_dosage" name="dosage">
+                    </div>
+                    <div class="mb-3">
+                        <label for="medication_frequency" class="form-label">Frequency</label>
+                        <input type="text" class="form-control" id="medication_frequency" name="frequency">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Medication</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteDisease(diseaseId) {
+    if (confirm('Are you sure you want to delete this disease record?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/disease/${diseaseId}/delete`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function deleteMedication(medicationId) {
+    if (confirm('Are you sure you want to delete this medication record?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/medication/${medicationId}/delete`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Pago - {{ patient.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus me-2"></i>Registrar Nuevo Pago
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Paciente:</strong> {{ patient.name }} | 
+                        <strong>Email:</strong> {{ patient.email }} | 
+                        <strong>Teléfono:</strong> {{ patient.phone }}
+                    </div>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="amount" class="form-label">
+                                    <i class="fas fa-dollar-sign me-1"></i>Monto ($)
+                                </label>
+                                <input type="number" class="form-control" id="amount" name="amount" 
+                                       step="0.01" min="0" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="payment_date" class="form-label">
+                                    <i class="fas fa-calendar me-1"></i>Fecha de Pago
+                                </label>
+                                <input type="date" class="form-control" id="payment_date" name="payment_date" 
+                                       value="{{ today }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="service_type" class="form-label">
+                                    <i class="fas fa-stethoscope me-1"></i>Tipo de Servicio
+                                </label>
+                                <select class="form-select" id="service_type" name="service_type" required>
+                                    <option value="">Seleccionar servicio...</option>
+                                    <option value="Consulta General">Consulta General</option>
+                                    <option value="Consulta Especializada">Consulta Especializada</option>
+                                    <option value="Diagnóstico">Diagnóstico</option>
+                                    <option value="Prescripción">Prescripción</option>
+                                    <option value="Laboratorio">Laboratorio</option>
+                                    <option value="Radiografía">Radiografía</option>
+                                    <option value="Procedimiento">Procedimiento</option>
+                                    <option value="Certificado Médico">Certificado Médico</option>
+                                    <option value="Urgencias">Urgencias</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="payment_method" class="form-label">
+                                    <i class="fas fa-credit-card me-1"></i>Método de Pago
+                                </label>
+                                <select class="form-select" id="payment_method" name="payment_method" required>
+                                    <option value="">Seleccionar método...</option>
+                                    <option value="Cash">Efectivo</option>
+                                    <option value="Card">Tarjeta de Crédito/Débito</option>
+                                    <option value="Transfer">Transferencia Bancaria</option>
+                                    <option value="Check">Cheque</option>
+                                    <option value="Other">Otro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">
+                                    <i class="fas fa-check-circle me-1"></i>Estado del Pago
+                                </label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="Completed">Completado</option>
+                                    <option value="Pending">Pendiente</option>
+                                    <option value="Cancelled">Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="notes" class="form-label">
+                                    <i class="fas fa-sticky-note me-1"></i>Notas Adicionales
+                                </label>
+                                <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                          placeholder="Observaciones sobre el pago..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('patient_payments', patient_id=patient.id) }}" 
+                               class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Registrar Pago
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Establecer fecha actual por defecto
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('payment_date').value = today;
+});
+
+// Validación del formulario
+document.querySelector('form').addEventListener('submit', function(e) {
+    const amount = document.getElementById('amount').value;
+    if (amount <= 0) {
+        e.preventDefault();
+        alert('El monto debe ser mayor a $0');
+        return false;
+    }
+});
+</script>
+{% endblock %} 

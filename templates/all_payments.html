@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Control de Pagos - Sistema{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-credit-card me-2"></i>Control de Pagos
+                    </h2>
+                    <p class="text-muted mb-0">Gestión financiera del sistema médico</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-1"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Estadísticas de Pagos -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                            <h4 class="mb-1">${{ "%.2f"|format(stats.total_revenue) }}</h4>
+                            <p class="mb-0">Ingresos Totales</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clock fa-2x mb-2"></i>
+                            <h4 class="mb-1">${{ "%.2f"|format(stats.pending_payments) }}</h4>
+                            <p class="mb-0">Pagos Pendientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-list fa-2x mb-2"></i>
+                            <h4 class="mb-1">{{ stats.total_payments }}</h4>
+                            <p class="mb-0">Total Registros</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <h4 class="mb-1">{{ "%.1f"|format((stats.total_revenue / stats.total_payments) if stats.total_payments > 0 else 0) }}</h4>
+                            <p class="mb-0">Promedio por Pago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Pagos -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Historial de Pagos del Sistema
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if payments %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Paciente</th>
+                                        <th>Servicio</th>
+                                        <th>Monto</th>
+                                        <th>Método</th>
+                                        <th>Estado</th>
+                                        <th>Notas</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for payment in payments %}
+                                    <tr>
+                                        <td>{{ payment.payment_date.strftime('%d/%m/%Y') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('view_patient', patient_id=payment.patient.id) }}" 
+                                               class="text-decoration-none">
+                                                <i class="fas fa-user me-1"></i>{{ payment.patient.name }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ payment.service_type }}</span>
+                                        </td>
+                                        <td>
+                                            <strong class="text-success">${{ "%.2f"|format(payment.amount) }}</strong>
+                                        </td>
+                                        <td>
+                                            {% if payment.payment_method == 'Cash' %}
+                                                <i class="fas fa-money-bill text-success me-1"></i>Efectivo
+                                            {% elif payment.payment_method == 'Card' %}
+                                                <i class="fas fa-credit-card text-primary me-1"></i>Tarjeta
+                                            {% elif payment.payment_method == 'Transfer' %}
+                                                <i class="fas fa-university text-info me-1"></i>Transferencia
+                                            {% elif payment.payment_method == 'Check' %}
+                                                <i class="fas fa-file-invoice-dollar text-warning me-1"></i>Cheque
+                                            {% else %}
+                                                <i class="fas fa-question-circle text-muted me-1"></i>Otro
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if payment.status == 'Completed' %}
+                                                <span class="badge bg-success">Completado</span>
+                                            {% elif payment.status == 'Pending' %}
+                                                <span class="badge bg-warning">Pendiente</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Cancelado</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if payment.notes %}
+                                                <small class="text-muted">{{ payment.notes[:30] }}{% if payment.notes|length > 30 %}...{% endif %}</small>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ url_for('patient_payments', patient_id=payment.patient.id) }}" 
+                                                   class="btn btn-sm btn-outline-info" title="Ver pagos del paciente">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                        onclick="deletePayment({{ payment.id }})" title="Eliminar pago">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-credit-card fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No hay pagos registrados</h5>
+                            <p class="text-muted">Aún no se han registrado pagos en el sistema.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deletePaymentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar este pago?</p>
+                <p class="text-muted small">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deletePaymentForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deletePayment(paymentId) {
+    if (confirm('¿Estás seguro de que quieres eliminar este pago? Esta acción no se puede deshacer.')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/payment/${paymentId}/delete`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %} 

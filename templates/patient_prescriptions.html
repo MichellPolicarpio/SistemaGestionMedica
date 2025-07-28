@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-prescription"></i> Recetas - {{ patient.name }}</h2>
+                <div>
+                    <a href="{{ url_for('new_prescription', patient_id=patient.id) }}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Nueva Receta
+                    </a>
+                    <a href="{{ url_for('view_patient', patient_id=patient.id) }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver al Paciente
+                    </a>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>Paciente:</strong> {{ patient.name }} | 
+                <strong>Edad:</strong> {{ 2025 - ((patient.date_of_birth|string).split('-')[0]|int) }} años |
+                <strong>Contacto:</strong> {{ patient.phone }}
+            </div>
+
+            {% if prescriptions %}
+                <div class="row">
+                    {% for prescription in prescriptions %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-calendar"></i> {{ prescription.date }}
+                                </h6>
+                                <div>
+                                    <a href="{{ url_for('prescription_pdf', prescription_id=prescription.id) }}" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-download"></i> PDF
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <strong>Doctor:</strong> Dr. {{ prescription.doctor_name }}
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Diagnóstico:</strong>
+                                    <p class="text-muted mb-1">{{ prescription.diagnosis[:100] }}{% if prescription.diagnosis|length > 100 %}...{% endif %}</p>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Medicamentos:</strong>
+                                    <p class="text-muted mb-1">{{ prescription.medications[:100] }}{% if prescription.medications|length > 100 %}...{% endif %}</p>
+                                </div>
+                                {% if prescription.instructions %}
+                                <div class="mb-2">
+                                    <strong>Instrucciones:</strong>
+                                    <p class="text-muted mb-1">{{ prescription.instructions[:100] }}{% if prescription.instructions|length > 100 %}...{% endif %}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer text-muted">
+                                Creado: {{ prescription.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-prescription fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No se Encontraron Recetas</h4>
+                    <p class="text-muted">Este paciente no tiene recetas aún.</p>
+                    <a href="{{ url_for('new_prescription', patient_id=patient.id) }}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Crear Primera Receta
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

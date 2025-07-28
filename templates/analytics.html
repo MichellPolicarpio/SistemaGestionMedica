@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Sistema de Gestión Médica{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-chart-pie me-2 text-primary"></i>Panel de Analytics
+        </h2>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">{{ total_patients }}</h3>
+                    <p class="mb-0">Total de Pacientes</p>
+                </div>
+                <i class="fas fa-users fa-2x"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">{{ total_diseases }}</h3>
+                    <p class="mb-0">Total de Enfermedades</p>
+                </div>
+                <i class="fas fa-virus fa-2x"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row">
+    <!-- Age Distribution -->
+    <div class="col-md-6 mb-4">
+        <div class="chart-container">
+            <h5 class="mb-3">
+                <i class="fas fa-chart-pie me-2"></i>Distribución por Edad
+            </h5>
+            {% if age_chart %}
+            <img src="{{ url_for('static', filename=age_chart) }}" alt="Distribución por Edad" class="img-fluid">
+            {% else %}
+            <p class="text-muted text-center py-4">No hay datos disponibles para la distribución por edad</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- BMI Distribution -->
+    <div class="col-md-6 mb-4">
+        <div class="chart-container">
+            <h5 class="mb-3">
+                <i class="fas fa-chart-pie me-2"></i>Distribución de IMC
+            </h5>
+            {% if bmi_chart %}
+            <img src="{{ url_for('static', filename=bmi_chart) }}" alt="Distribución de IMC" class="img-fluid">
+            {% else %}
+            <p class="text-muted text-center py-4">No hay datos disponibles para la distribución de IMC</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Disease Distribution -->
+{% if disease_chart %}
+<div class="row">
+    <div class="col-12">
+        <div class="chart-container">
+            <h5 class="mb-3">
+                <i class="fas fa-chart-pie me-2"></i>Distribución de Enfermedades
+            </h5>
+            <img src="{{ url_for('static', filename=disease_chart) }}" alt="Distribución de Enfermedades" class="img-fluid">
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Chart Legend -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Información de Gráficos
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>Distribución por Edad</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>0-20:</strong> Pacientes jóvenes</li>
+                            <li><strong>21-40:</strong> Adultos jóvenes</li>
+                            <li><strong>41-60:</strong> Adultos de mediana edad</li>
+                            <li><strong>61+:</strong> Pacientes mayores</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Categorías de IMC</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Bajo peso:</strong> IMC < 18.5</li>
+                            <li><strong>Normal:</strong> IMC 18.5-24.9</li>
+                            <li><strong>Sobrepeso:</strong> IMC 25-29.9</li>
+                            <li><strong>Obesidad:</strong> IMC ≥ 30</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Estado de Enfermedad</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Activa:</strong> Actualmente afectando al paciente</li>
+                            <li><strong>Curada:</strong> Tratada exitosamente</li>
+                            <li><strong>Crónica:</strong> Condición a largo plazo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
