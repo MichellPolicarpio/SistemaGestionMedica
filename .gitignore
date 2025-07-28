@@ -60,4 +60,11 @@ static/*.gif
 # Charts and reports
 static/age_chart.png
 static/bmi_chart.png
-static/disease_chart.png 
+static/disease_chart.png
+
+# Patient reports and sensitive data
+reports/
+*.pdf
+patient_report_*.pdf
+diagnostico_medico_*.pdf
+receta_medica_*.pdf 
