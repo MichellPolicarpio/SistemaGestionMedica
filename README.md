@@ -1,4 +1,4 @@
-# �� Sistema de Gestión Médica
+# Sistema de Gestión Médica
 
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg)](https://flask.palletsprojects.com/)
@@ -7,8 +7,6 @@
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-1.4+-red.svg)](https://www.sqlalchemy.org/)
 [![ReportLab](https://img.shields.io/badge/ReportLab-PDF%20Generation-yellow.svg)](https://www.reportlab.com/)
 [![Matplotlib](https://img.shields.io/badge/Matplotlib-Charts-lightgrey.svg)](https://matplotlib.org/)
-
-**Autor:** Michell Alexis Policarpio Moran
 
 Un sistema web completo y profesional para la gestión integral de pacientes, diagnósticos médicos, prescripciones y control de pagos en clínicas médicas. Diseñado con una interfaz moderna, funcionalidades avanzadas y reportes profesionales.
 
