@@ -12,6 +12,8 @@
 
 Un sistema web completo y profesional para la gestión integral de pacientes, diagnósticos médicos, prescripciones y control de pagos en clínicas médicas. Diseñado con una interfaz moderna, funcionalidades avanzadas y reportes profesionales.
 
+![Dashboard Principal - Sistema de Gestión Médica](ReadmeImages/PaginaInicio.jpg)
+
 ## ✨ Características Principales
 
 ### 🧑‍⚕️ **Gestión de Pacientes**
@@ -184,14 +186,25 @@ Para cambiar la configuración de MySQL:
 ## 📱 Capturas de Pantalla
 
 ### Dashboard Principal
+![Dashboard Principal - Sistema de Gestión Médica](ReadmeImages/PaginaInicio.jpg)
+
 - Estadísticas en tiempo real
 - Acceso rápido a funciones principales
 - Lista de pacientes recientes
 
 ### Gestión de Pacientes
+![Pacientes Recientes](ReadmeImages/PacientesRecientes.jpg)
+
 - Formularios completos en español
 - Búsqueda avanzada
 - Información médica detallada
+
+### Agregar Nuevo Paciente
+![Formulario de Nuevo Paciente](ReadmeImages/AgregarPaciente.jpg)
+
+- Formulario completo con validación
+- Cálculo automático de BMI
+- Historial médico detallado
 
 ### Reportes PDF
 - Formato profesional médico
