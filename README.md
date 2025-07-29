@@ -28,12 +28,12 @@ Un sistema web completo y profesional para la gestión integral de pacientes, di
 - ✅ **Cédula Profesional**: Registro dinámico del médico tratante
 - ✅ **Envío por Email**: Envío automático de reportes médicos
 
-### 💰 **Control de Pagos Integrado**
+### 💰 **Control de Pagos**
 - ✅ Registro automático de pagos al crear diagnósticos
 - ✅ Gestión manual de pagos por paciente
 - ✅ Estadísticas financieras en tiempo real
 - ✅ Historial completo de transacciones
-- ✅ Múltiples métodos de pago (Efectivo, Tarjeta, Transferencia)
+- ✅ Registro de múltiples métodos de pago (Efectivo, Tarjeta, Transferencia)
 
 ### 🎨 **Interfaz Moderna y Profesional**
 - ✅ **Modo Oscuro/Claro**: Toggle para cambiar tema con persistencia
